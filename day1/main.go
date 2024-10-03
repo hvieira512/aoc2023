@@ -8,6 +8,8 @@ import (
 	"unicode"
 )
 
+var NUMBERS = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
+
 func getPart1(data []byte) int {
 	result := 0
 	numberLineList := []string{}
@@ -70,4 +72,7 @@ func main() {
 
 	resultPart1 := getPart1(data)
 	fmt.Printf("Part 1: %d\n", resultPart1)
+
+	resultPart2 := getPart2(data)
+	fmt.Printf("Part 2: %d\n", resultPart2)
 }
