@@ -42,8 +42,8 @@ func getSeeds(lines []string) []int {
 
 func getMaps(lines []string) []SeedMap {
 	maps := []SeedMap{}
-	mapsCoordinates := getMapsCoordinates(lines)
 
+	mapsCoordinates := getMapsCoordinates(lines)
 	for _, mapCoordinates := range mapsCoordinates {
 		newMap := SeedMap{}
 		newMapValues := SeedMapValues{}
@@ -96,12 +96,26 @@ func getMapsCoordinates(lines []string) [][]int {
 
 	for i := range emptyLinesIndex {
 		if i+1 < len(emptyLinesIndex) {
-			// fmt.Printf("Map coordinates: %v %v\n", emptyLinesIndex[i]+1, emptyLinesIndex[i+1]-1)
 			mapsCoordinates = append(mapsCoordinates, []int{emptyLinesIndex[i] + 1, emptyLinesIndex[i+1] - 1})
 		}
 	}
 
 	return mapsCoordinates
+}
+
+func renderSeedMaps(maps []SeedMap) {
+	for _, seedMap := range maps {
+		fmt.Printf("%s-to-%s\n", seedMap.source, seedMap.destination)
+		for i := 0; i < len(seedMap.values.ranges); i++ {
+			fmt.Printf(
+				"%d %d %d\n",
+				seedMap.values.destinations[i],
+				seedMap.values.sources[i],
+				seedMap.values.ranges[i],
+			)
+		}
+		fmt.Println()
+	}
 }
 
 func main() {
@@ -110,5 +124,5 @@ func main() {
 	maps := getMaps(lines)
 
 	fmt.Printf("Seeds: %v\n", seeds)
-	fmt.Printf("Maps: %v\n", maps)
+	renderSeedMaps(maps)
 }
