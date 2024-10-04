@@ -16,8 +16,8 @@ type SeedMap struct {
 }
 
 type SeedMapValues struct {
-	sources      []int
 	destinations []int
+	sources      []int
 	ranges       []int
 }
 
@@ -42,23 +42,30 @@ func getSeeds(lines []string) []int {
 
 func getMaps(lines []string) []SeedMap {
 	maps := []SeedMap{}
+	mapsCoordinates := getMapsCoordinates(lines)
 
-	// loop while I dont find a blank new line
-	for i, line := range lines {
-		// no need to read the seed
-		if i < 2 {
-			continue
+	for _, mapCoordinates := range mapsCoordinates {
+		newMap := SeedMap{}
+		newMapValues := SeedMapValues{}
+		for i := mapCoordinates[0]; i <= mapCoordinates[1]; i++ {
+
+			if i == mapCoordinates[0] {
+				newMap.source = getMapSource(lines[i])
+				newMap.destination = getMapDestination(lines[i])
+			} else {
+				values := strings.Split(lines[i], " ")
+
+				newDestination, _ := strconv.Atoi(values[0])
+				newSource, _ := strconv.Atoi(values[1])
+				newRange, _ := strconv.Atoi(values[2])
+
+				newMapValues.destinations = append(newMapValues.destinations, newDestination)
+				newMapValues.sources = append(newMapValues.sources, newSource)
+				newMapValues.ranges = append(newMapValues.ranges, newRange)
+			}
 		}
-
-		// new map detected
-		if strings.Contains(line, "map") {
-			// get source and destination
-			newMapSource := getMapSource(line)
-			newMapDestination := getMapDestination(line)
-			fmt.Println(newMapSource, newMapDestination)
-
-			// get values
-		}
+		newMap.values = newMapValues
+		maps = append(maps, newMap)
 	}
 
 	return maps
@@ -75,6 +82,26 @@ func getMapDestination(line string) string {
 	source = strings.Split(source[1], " map:")
 	trimmedSource := strings.Trim(source[0], " ")
 	return trimmedSource
+}
+
+func getMapsCoordinates(lines []string) [][]int {
+	emptyLinesIndex := []int{}
+	mapsCoordinates := [][]int{}
+
+	for i, line := range lines {
+		if len(line) == 0 {
+			emptyLinesIndex = append(emptyLinesIndex, i)
+		}
+	}
+
+	for i := range emptyLinesIndex {
+		if i+1 < len(emptyLinesIndex) {
+			// fmt.Printf("Map coordinates: %v %v\n", emptyLinesIndex[i]+1, emptyLinesIndex[i+1]-1)
+			mapsCoordinates = append(mapsCoordinates, []int{emptyLinesIndex[i] + 1, emptyLinesIndex[i+1] - 1})
+		}
+	}
+
+	return mapsCoordinates
 }
 
 func main() {
