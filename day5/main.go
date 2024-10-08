@@ -47,8 +47,8 @@ func getMaps(lines []string) []SeedMap {
 	for _, mapCoordinates := range mapsCoordinates {
 		newMap := SeedMap{}
 		newMapValues := SeedMapValues{}
-		for i := mapCoordinates[0]; i <= mapCoordinates[1]; i++ {
 
+		for i := mapCoordinates[0]; i <= mapCoordinates[1]; i++ {
 			if i == mapCoordinates[0] {
 				newMap.source = getMapSource(lines[i])
 				newMap.destination = getMapDestination(lines[i])
@@ -96,26 +96,42 @@ func getMapsCoordinates(lines []string) [][]int {
 
 	for i := range emptyLinesIndex {
 		if i+1 < len(emptyLinesIndex) {
-			mapsCoordinates = append(mapsCoordinates, []int{emptyLinesIndex[i] + 1, emptyLinesIndex[i+1] - 1})
+			mapsCoordinates = append(
+				mapsCoordinates,
+				[]int{emptyLinesIndex[i] + 1, emptyLinesIndex[i+1] - 1})
 		}
 	}
 
 	return mapsCoordinates
 }
 
-func renderSeedMaps(maps []SeedMap) {
-	for _, seedMap := range maps {
-		fmt.Printf("%s-to-%s\n", seedMap.source, seedMap.destination)
-		for i := 0; i < len(seedMap.values.ranges); i++ {
-			fmt.Printf(
-				"%d %d %d\n",
-				seedMap.values.destinations[i],
-				seedMap.values.sources[i],
-				seedMap.values.ranges[i],
-			)
+func partOne(seeds []int, seedMaps []SeedMap) int {
+	// fmt.Printf("Seeds: %v\n", seeds)
+	for i := range seeds {
+		for _, seedMap := range seedMaps {
+			fmt.Printf("%s-to-%s map:\n", seedMap.source, seedMap.destination)
+
+			// Loop through each line
+			for j := 0; j < len(seedMap.values.destinations); j++ {
+				fmt.Printf("%d %d %d\n\n",
+					seedMap.values.destinations[j],
+					seedMap.values.sources[j],
+					seedMap.values.ranges[j])
+
+				// Loop through each range value
+				for k := 0; k < seedMap.values.ranges[j]; k++ {
+					fmt.Printf("%d -> %d\n", seedMap.values.sources[j]+k, seedMap.values.destinations[j]+k)
+					if seeds[i] == seedMap.values.sources[j]+k {
+						seeds[i] = seedMap.values.destinations[j] + k
+					}
+				}
+			}
+			break
 		}
-		fmt.Println()
+		break
 	}
+
+	return 0
 }
 
 func main() {
@@ -123,6 +139,9 @@ func main() {
 	seeds := getSeeds(lines)
 	maps := getMaps(lines)
 
-	fmt.Printf("Seeds: %v\n", seeds)
-	renderSeedMaps(maps)
+	resultPartOne := partOne(seeds, maps)
+	fmt.Printf("Part 1: %d\n", resultPartOne)
+
+	// resultPartTwo := partTwo(seeds, maps)
+	// fmt.Printf("Part 2: %d\n", resultPartTwo)
 }
